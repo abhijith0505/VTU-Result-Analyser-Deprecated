@@ -5,8 +5,8 @@ from twilio.rest import TwilioRestClient
 
 account_sid = " " # Your Account SID from www.twilio.com/console
 auth_token  = " "  # Your Auth Token from www.twilio.com/console
-
-vtu = "http://results.vtu.ac.in/"
+usn=" " # Your USN 
+vtu = "http://results.vtu.ac.in/?submit=1&rid={}".format(usn)
 page = urllib2.urlopen(vtu)
 soup = BeautifulSoup(page,"html.parser")
 
@@ -22,7 +22,7 @@ else:
         flag = file.read(1)
 
 if flag == "0":
-	if complete_text.find(" ")!=-1:  #The text you want to search for | "B.E/B.Tech IV Semester" for 4th sem results
+	if complete_text.find("Results are not yet available")==-1:  
 		client = TwilioRestClient(account_sid, auth_token)
         try:
 			message = client.messages.create(body=" ",		#Messgage body you want to receive as SMS
