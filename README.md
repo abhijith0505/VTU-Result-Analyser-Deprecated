@@ -13,6 +13,7 @@ Prerequisite
 -------------------
 
 * Install BeautifulSoup, which is used for scraping the website.
+
 	` $ apt-get install python-bs4`
 	
 	**Beautiful Soup 4** is published through PyPi, so if you can’t install it with the system packager, you can install it with **easy_install** or **pip**. The package name is *beautifulsoup4*, and the same package works on Python 2 and Python 3.
@@ -22,13 +23,16 @@ Prerequisite
 	` $ pip install beautifulsoup4`
 
 	* If you do not have **pip** installed, install it using:   
+	
 	`$ easy_install pip`
 	
 *  The SMS to your number is sent using **twilio**. 
 	* Install twilio module. The easiest way to install twilio-python is from PyPi using **pip**, a package manager for Python. Simply run this in the terminal:
+	
    `$ pip install twilio`
 	
 	If you get a *pip: command not found* error, you can also use **easy_install**. Run this in your terminal:
+	
 	`$ easy_install twilio`
 
 
