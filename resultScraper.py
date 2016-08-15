@@ -1,4 +1,4 @@
-import urllib2
+import urllib
 import os.path
 from bs4 import BeautifulSoup
 from twilio.rest import TwilioRestClient
@@ -7,7 +7,7 @@ account_sid = " " # Your Account SID from www.twilio.com/console
 auth_token  = " "  # Your Auth Token from www.twilio.com/console
 usn = "  " # Your USN 
 vtu = "http://results.vtu.ac.in/?submit=1&rid={}".format(usn)
-page = urllib2.urlopen(vtu)
+page = urllib.urlopen(vtu)
 soup = BeautifulSoup(page,"html.parser")
 
 complete_text = soup.getText()
