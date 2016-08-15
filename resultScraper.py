@@ -5,7 +5,7 @@ from twilio.rest import TwilioRestClient
 
 account_sid = " " # Your Account SID from www.twilio.com/console
 auth_token  = " "  # Your Auth Token from www.twilio.com/console
-usn=" *** " # Your USN 
+usn="  " # Your USN 
 vtu = "http://results.vtu.ac.in/?submit=1&rid={}".format(usn)
 page = urllib2.urlopen(vtu)
 soup = BeautifulSoup(page,"html.parser")
@@ -28,6 +28,5 @@ if flag == "0":
 		message = client.messages.create(body=" ",		#Messgage body you want to receive as SMS
 			to=" ",   #Replace with your number to which you want to send the message
 			from_=" ") # Replace with your Twilio number
-		
-        file = open('rctmp','w')
+		file = open('rctmp','w')
         file.write('1')
