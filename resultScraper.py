@@ -24,11 +24,10 @@ else:
 if flag == "0":
 	if complete_text.find("Results are not yet available")==-1:  
 		client = TwilioRestClient(account_sid, auth_token)
-        try:
+        
 		message = client.messages.create(body=" ",		#Messgage body you want to receive as SMS
 			to=" ",   #Replace with your number to which you want to send the message
 			from_=" ") # Replace with your Twilio number
-		except TwilioRestException as e:
-			print e
+		
         file = open('rctmp','w')
         file.write('1')
