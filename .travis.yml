@@ -8,7 +8,9 @@ python:
 install:
   - pip install beautifulsoup4
   - pip install twilio
+  - pip install lxml
+  - pip install requests
 # command to run tests
-script: 
+script:
   - nosetests
   - python resultScraper.py
