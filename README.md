@@ -17,7 +17,7 @@ Prerequisite
 -------------------
 
 
-* **$ git clone** the repository and edit the **resultScraper.py** file.
+* **$ git clone** the repository.
 
 	` $ git clone https://github.com/abhijith0505/VTU-Result-Notifier.git`
 
