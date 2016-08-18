@@ -4,16 +4,17 @@ from lxml import etree, html
 import requests
 from student import Student
 
-#from twilio.rest import TwilioRestClient
+from twilio.rest import TwilioRestClient
 
-#account_sid = " " # Your Account SID from www.twilio.com/console
-#auth_token  = " "  # Your Auth Token from www.twilio.com/console
-usn = "1MV14IS045" # Your USN
-#using lxml to access data through xpath selectors
+account_sid = " " # Your Account SID from www.twilio.com/console
+auth_token  = " "  # Your Auth Token from www.twilio.com/console
+usn = "" # Your USN
+using lxml to access data through xpath selectors
 
-Sharath = Student()
-print Sharath.get_name()
-'''
+StudentObject = Student()
+
+#print StudentObject.get_name()		#UnderDev
+
 if os.path.isfile('rctmp') == True:
 	file = open('rctmp','r+')
 	flag = file.read(1)
@@ -32,4 +33,4 @@ if flag == "0":
 			from_=" ") # Replace with your Twilio number
 		file = open('rctmp','w')
 		file.write('1')
-'''
+
