@@ -1,5 +1,6 @@
 import os.path
 from student import Student
+from section import Section
 
 from twilio.rest import TwilioRestClient
 
@@ -10,8 +11,12 @@ usn = "" # Your USN
 
 StudentObject = Student()
 
-print StudentObject.get_name()		#UnderDev
+#print StudentObject.get_name()		#UnderDev
 
+ISE = Section()
+ISE.fetch_results()
+ISE.clean_data()
+print ISE.print_names()
 
 '''
 if os.path.isfile('rctmp') == True:

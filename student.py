@@ -9,7 +9,7 @@ BASE_URL = 'http://results.vtu.ac.in'
 
 class Student(object):
     """docstring for Student."""
-    def __init__(self, usn='1MV14IS045'):
+    def __init__(self, usn='1MV14IS080'):
         super(Student, self).__init__()
         self.usn = usn
         headers = {
