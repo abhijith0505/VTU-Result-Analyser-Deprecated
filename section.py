@@ -1,23 +1,16 @@
-from student import Student
+from student import student_results
+from pymongo import MongoClient
+import pymongo
+from collections import OrderedDict
 
 
 NUM_OF_STUDENTS = 200
 
-class Section(object):
-    """docstring for Section."""
-    def __init__(self, college_code='1MV', year='14', branch='IS'):
-        super(Section, self).__init__()
-        self.college_code = college_code
-        self.year = year
-        self.branch = branch
-
-    def fetch_results(self):
-        self.students = [Student(self.college_code+self.year+self.branch+str(student).zfill(3)) for student in range(NUM_OF_STUDENTS)]
-
-
-    def clean_data(self):
-        self.students = [self.students[student] for student in range(len(self.students)) if (self.students[student].get_name())]
-
-    def print_names(self):
-        for student in range(len(self.students)):
-            print self.students[student].get_name()
+def insert_section_results(college_code='1MV', year='14', branch='IS'):
+    client = MongoClient(document_class=OrderedDict)
+    db = client.results
+    db.students.ensure_index('usn', unique=True)
+    for student in range(NUM_OF_STUDENTS):
+        result = student_results(college_code='1MV', year='14', branch='IS', regno=student)
+        if (result != None):
+            db.students.insert_one(result)

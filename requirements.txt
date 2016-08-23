@@ -2,3 +2,6 @@ beautifulsoup4
 twilio
 lxml
 requests
+ming
+urllib2
+pymongo

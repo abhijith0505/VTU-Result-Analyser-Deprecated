@@ -1,9 +1,12 @@
+from pymongo import MongoClient
+import pymongo
+from collections import OrderedDict
 from lxml import etree, html
 import requests
 import urllib2
-from collections import OrderedDict
-from pymongo import MongoClient
-import pymongo
+
+
+
 
 
 BASE_URL = 'http://results.vtu.ac.in'
@@ -21,7 +24,7 @@ def student_results(college_code='1MV', year='14', branch='IS', regno=46):
         'rid': college_code.upper() + year + branch.upper() + str(regno).zfill(3),
         'submit': 'SUBMIT'
     }
-    
+
     # xpath selector for subject name
     sub_xpath = '/html/body/table/tbody/tr[3]/td[2]/table/tbody/tr[3]/td/table/tbody/tr[2]/td[1]/table[2]/tbody/tr/td/table/tbody/tr[2]/td/table[2]/tr[{}]/td[{}]/i/text()'
 
@@ -169,3 +172,16 @@ def student_results(college_code='1MV', year='14', branch='IS', regno=46):
         student = None
 
     return student
+
+
+
+NUM_OF_STUDENTS = 200
+
+def insert_section_results(college_code='1MV', year='14', branch='IS'):
+    client = MongoClient(document_class=OrderedDict)
+    db = client.results
+    db.students.ensure_index('usn', unique=True)
+    for student in range(NUM_OF_STUDENTS):
+        result = student_results(college_code='1MV', year='14', branch='IS', regno=student)
+        if (result != None):
+            db.students.insert_one(result)
