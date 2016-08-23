@@ -1,5 +1,4 @@
 twilio
 lxml
 requests
-urllib2
 pymongo
