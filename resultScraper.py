@@ -1,24 +1,24 @@
 import os.path
-from student import Student
-from section import Section
-
+from pymongo import MongoClient
+import pymongo
+from collections import OrderedDict
+from helpers import insert_section_results
 from twilio.rest import TwilioRestClient
 
 account_sid = " " # Your Account SID from www.twilio.com/console
 auth_token  = " "  # Your Auth Token from www.twilio.com/console
 usn = "" # Your USN
-#using lxml to access data through xpath selectors
 
-StudentObject = Student()
-
-#print StudentObject.get_name()		#UnderDev
-
-ISE = Section()
-ISE.fetch_results()
-ISE.clean_data()
-print ISE.print_names()
-
+#result = student_results()
+insert_section_results()
 '''
+client = MongoClient(document_class=OrderedDict)
+db = client.results
+db.students.ensure_index('usn', unique=True)
+db.students.insert_one(result)
+
+
+
 if os.path.isfile('rctmp') == True:
 	file = open('rctmp','r+')
 	flag = file.read(1)

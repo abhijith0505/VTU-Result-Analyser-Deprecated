@@ -1,4 +1,3 @@
-section.pyc
-student.pyc
-helpers.pyc
+*.pyc
 rctmp
+student.json
