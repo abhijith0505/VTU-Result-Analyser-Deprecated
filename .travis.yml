@@ -11,3 +11,5 @@ install:
 script:
   - nosetests
   - python resultScraper.py
+services: mongodb
+
