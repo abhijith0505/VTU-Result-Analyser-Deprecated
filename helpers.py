@@ -4,14 +4,21 @@ from collections import OrderedDict
 from lxml import etree, html
 import requests
 import urllib2
+import threading
 
 
 
+NUM_OF_STUDENTS = 150
+RESPONSE_COUNT = 0
+NUM_OF_COLLEGES = 172
+
+#BRANCH_CODES = ['bt', 'cv', 'ee', 'ec', 'te', 'is', 'cs', 'me']
+BRANCH_CODES = ['is']
 
 
 BASE_URL = 'http://results.vtu.ac.in'
 
-def student_results(college_code='1MV', year='14', branch='IS', regno=46):
+def student_results(college_code='1MV', year='14', branch='IS', regno=45):
 
     headers = {
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:39.0) Gecko/20100101 Firefox/39.0',
@@ -34,8 +41,12 @@ def student_results(college_code='1MV', year='14', branch='IS', regno=46):
     # xpath selector for subject result
     sub_xpath3 = '/html/body/table/tbody/tr[3]/td[2]/table/tbody/tr[3]/td/table/tbody/tr[2]/td[1]/table[2]/tbody/tr/td/table/tbody/tr[2]/td/table[2]/tr[{}]/td[{}]/b/text()'
 
+
     response = requests.post(BASE_URL + '/vitavi.php', payload, headers=headers)
     tree = html.fromstring(response.content)
+    print ("\n---------------------------------------\n")
+    print ("Response code : ")
+    print (response.status_code)
 
     # student details
     student_name_usn = tree.xpath('/html/body/table/tbody/tr[3]/td[2]/table/tbody/tr[3]/td/table/tbody/tr[2]/td[1]/table[2]/tbody/tr/td/table/tbody/tr[2]/td/b/text()')
@@ -96,9 +107,11 @@ def student_results(college_code='1MV', year='14', branch='IS', regno=46):
         student_name_usn = student_name_usn[0].split('(')
         result = result[0].split()
         total_marks = total_marks[0].strip().replace(' ','')
-        if len(result) == 3:
+        if len(result) == 5:
+            result = result[1] + ' ' + result[2] + ' ' + result[3] + ' ' + result[4]
+        elif len(result) == 3:
             result = result[1] + ' ' + result[2]
-        else:
+        elif len(result) == 2:
             result = result[1]
 
         student = OrderedDict([
@@ -107,6 +120,9 @@ def student_results(college_code='1MV', year='14', branch='IS', regno=46):
             ('semester', semester[0]),
             ('result', result),
             ('total_marks', total_marks),
+            ('college_code', college_code),
+            ('year', year),
+            ('branch', branch),
             ('subject_marks', [
                     OrderedDict([
                         ('subject', sub1[0]),
@@ -175,13 +191,57 @@ def student_results(college_code='1MV', year='14', branch='IS', regno=46):
 
 
 
-NUM_OF_STUDENTS = 200
 
 def insert_section_results(college_code='1MV', year='14', branch='IS'):
     client = MongoClient(document_class=OrderedDict)
     db = client.results
     db.students.ensure_index('usn', unique=True)
-    for student in range(NUM_OF_STUDENTS):
-        result = student_results(college_code='1MV', year='14', branch='IS', regno=student)
+    NONE_STUDENT_LIMIT = 20
+    NONE_STUDENT_COUNT = 0
+    STUDENT_COUNT = 0
+    regno = 1
+    while True:
+        if (STUDENT_COUNT >= 20):
+            STUDENT_COUNT=0
+        STUDENT_COUNT = STUDENT_COUNT + 1
+        usn = college_code.upper()+year.upper()+branch.upper()+str(regno).zfill(3).upper()
+        result = student_results(college_code=college_code, year=year, branch=branch, regno=regno)
+        print("Tried inserting : ")
+        print (usn)
         if (result != None):
-            db.students.insert_one(result)
+            try:
+                db.students.insert_one(result)
+                print ("Inserted : ")
+                print (usn)
+            except :
+                pass
+            print ("\n---------------------------------------\n")
+        else:
+            NONE_STUDENT_COUNT = NONE_STUDENT_COUNT + 1
+        regno = regno +1
+        if (NONE_STUDENT_COUNT == NONE_STUDENT_LIMIT or regno >=150):
+            break
+
+
+
+def insert_college_results(college_code, year='14'):
+    for branch in BRANCH_CODES:
+        insert_section_results(college_code=college_code, year=year, branch=branch)
+
+
+def insert_region_results(COLLEGE_CODES):
+    #COLLEGE_CODES = list(COLLEGE_CODES)
+    for college_code in COLLEGE_CODES:
+        insert_college_results(college_code=college_code, year='14')
+
+
+def insert_region_results_multithreaded(COLLEGE_CODES, num_threads=5):
+    cpt=NUM_OF_COLLEGES/num_threads #colleges_per_thread
+    threads = []
+    for i in range(num_threads):
+    	t = threading.Thread(target=insert_region_results, args=(COLLEGE_CODES[i*cpt:((i+1)*cpt)-1],))
+    	threads.append(t)
+    	t.start()
+    t = threading.Thread(target=insert_region_results, args=(COLLEGE_CODES[(i+1)*cpt:],))
+    threads.append(t)
+    t.start()
